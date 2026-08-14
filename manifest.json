@@ -1,0 +1,29 @@
+{
+  "manifest_version": 3,
+  "name": "FBI Content Blocker",
+  "version": "1.0",
+  "description": "Blocker con aviso de incautación de Silk Road.",
+  "permissions": [
+    "webNavigation",
+    "tabs",
+    "storage"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "background": {
+    "scripts": ["background.js"]
+  },
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "fbi/fbi.html", 
+        "fbi/fbi_silkroad.png", 
+        "rules/list_porn.json", 
+        "rules/list_gambling.json",
+        "rules/list_fakenews.json"
+      ],
+      "matches": ["<all_urls>"]
+    }
+  ]
+}
