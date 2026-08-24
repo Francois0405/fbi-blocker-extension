@@ -1,74 +1,72 @@
-let blockedDomains = new Set();
-// ¡AQUÍ ESTÁ EL CAMBIO! Forzamos a true para que arranque todo por defecto
-let activeFilters = { porn: true, gambling: true, fakenews: true };
-
-// Cargar las listas en el Hash Set O(1)
-async function loadLists() {
-  blockedDomains.clear();
-  
-  if (activeFilters.porn) {
-    const res = await fetch(chrome.runtime.getURL('rules/list_porn.json'));
-    const domains = await res.json();
-    domains.forEach(d => blockedDomains.add(d));
-  }
-  
-  if (activeFilters.gambling) {
-    const res = await fetch(chrome.runtime.getURL('rules/list_gambling.json'));
-    const domains = await res.json();
-    domains.forEach(d => blockedDomains.add(d));
-  }
-
-  if (activeFilters.fakenews) {
-    const res = await fetch(chrome.runtime.getURL('rules/list_fakenews.json'));
-    const domains = await res.json();
-    domains.forEach(d => blockedDomains.add(d));
-  }
-  
-  console.log(`Motor de bloqueo listo. Dominios cargados en RAM: ${blockedDomains.size}`);
+if (typeof importScripts === 'function') {
+  importScripts('categories.js');
 }
 
-// Escuchar cambios desde el panel de la extensión (para cuando lo construyas)
-chrome.storage.onChanged.addListener((changes) => {
-  if (changes.filters) {
-    activeFilters = changes.filters.newValue;
-    loadLists();
+let blockedDomains = new Set();
+let activeFilters = { ...DEFAULT_FILTERS };
+let loadGeneration = 0;
+
+function normalizeFilters(savedFilters = {}) {
+  return Object.fromEntries(
+    FILTER_CATEGORIES.map(({ key, defaultEnabled }) => [
+      key,
+      typeof savedFilters[key] === 'boolean' ? savedFilters[key] : defaultEnabled
+    ])
+  );
+}
+
+async function loadLists() {
+  const generation = ++loadGeneration;
+  const enabledCategories = FILTER_CATEGORIES.filter(({ key }) => activeFilters[key]);
+
+  try {
+    const lists = await Promise.all(enabledCategories.map(async ({ listPath }) => {
+      const response = await fetch(chrome.runtime.getURL(listPath));
+      if (!response.ok) throw new Error(`No se pudo cargar ${listPath}`);
+      return response.json();
+    }));
+
+    if (generation !== loadGeneration) return;
+
+    const nextBlockedDomains = new Set();
+    lists.forEach(domains => domains.forEach(domain => nextBlockedDomains.add(domain)));
+    blockedDomains = nextBlockedDomains;
+    console.log(`Motor de bloqueo listo. Dominios cargados en RAM: ${blockedDomains.size}`);
+  } catch (error) {
+    console.error('No se pudieron cargar las listas de bloqueo:', error);
   }
+}
+
+chrome.storage.onChanged.addListener((changes, areaName) => {
+  if (areaName !== 'local' || !changes.filters) return;
+  activeFilters = normalizeFilters(changes.filters.newValue);
+  loadLists();
 });
 
-// Inicializar el estado desde la memoria local
 chrome.storage.local.get(['filters'], (result) => {
-  if (result.filters) {
-    activeFilters = result.filters;
-  } else {
-    // Si no hay configuración previa guardada, inicializamos con todo activado
+  activeFilters = normalizeFilters(result.filters);
+  if (JSON.stringify(activeFilters) !== JSON.stringify(result.filters || {})) {
     chrome.storage.local.set({ filters: activeFilters });
   }
   loadLists();
 });
 
-// El Interceptor
 chrome.webNavigation.onBeforeNavigate.addListener((details) => {
-  // Solo interceptamos la ventana principal (frameId 0), ignoramos recursos secundarios
   if (details.frameId !== 0) return;
 
   try {
-    const url = new URL(details.url);
-    const hostname = url.hostname.replace(/^www\./, '');
+    const hostname = new URL(details.url).hostname.replace(/^www\./, '');
     const parts = hostname.split('.');
 
-    // Algoritmo de comprobación de subdominios
-    for (let i = 0; i < parts.length - 1; i++) {
-      const domainToCheck = parts.slice(i).join('.');
-      
-      if (blockedDomains.has(domainToCheck)) {
-        // ¡Cazado! Secuestramos la pestaña y redirigimos al aviso local
+    for (let i = 0; i < parts.length - 1; i += 1) {
+      if (blockedDomains.has(parts.slice(i).join('.'))) {
         chrome.tabs.update(details.tabId, {
-          url: chrome.runtime.getURL("fbi/fbi.html")
+          url: chrome.runtime.getURL('fbi/fbi.html')
         });
         break;
       }
     }
-  } catch (e) {
-    // URL inválida, seguimos navegando
+  } catch {
+    // Ignoramos URLs que no se pueden analizar.
   }
 });

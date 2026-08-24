@@ -12,16 +12,23 @@
     "<all_urls>"
   ],
   "background": {
-    "scripts": ["background.js"]
+    "scripts": ["categories.js", "background.js"],
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup/popup.html",
+    "default_title": "FBI Content Blocker"
   },
   "web_accessible_resources": [
     {
       "resources": [
         "fbi/fbi.html", 
         "fbi/fbi_silkroad.png", 
-        "rules/list_porn.json", 
+        "rules/list_base.json",
+        "rules/list_porn.json",
         "rules/list_gambling.json",
-        "rules/list_fakenews.json"
+        "rules/list_fakenews.json",
+        "rules/list_social.json"
       ],
       "matches": ["<all_urls>"]
     }

@@ -2,29 +2,37 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="popup.css">
+  <title>FBI Content Blocker</title>
 </head>
 <body>
-  <h3>Filtros Activos</h3>
-  
-  <div class="toggle-container">
-    <label>
-      <input type="checkbox" id="toggle-porn"> Contenido Adulto
-    </label>
-  </div>
-  
-  <div class="toggle-container">
-    <label>
-      <input type="checkbox" id="toggle-gambling"> Apuestas / Casinos
-    </label>
-  </div>
-  
-  <div class="toggle-container">
-    <label>
-      <input type="checkbox" id="toggle-fakenews"> Fake News
-    </label>
-  </div>
+  <main class="popup-shell">
+    <header class="hero">
+      <div class="brand-mark" aria-hidden="true">✦</div>
+      <div>
+        <p class="eyebrow">FBI CONTENT BLOCKER</p>
+        <h1 id="protection-title">Protección activa</h1>
+        <p class="summary" id="protection-summary">Cargando filtros…</p>
+      </div>
+    </header>
 
+    <section class="master-card" aria-labelledby="master-label">
+      <div>
+        <p class="card-label" id="master-label">Protección completa</p>
+        <p class="card-description">Activa o pausa todos los filtros.</p>
+      </div>
+      <label class="switch">
+        <span class="sr-only">Activar todos los filtros</span>
+        <input type="checkbox" id="toggle-all">
+        <span class="slider"></span>
+      </label>
+    </section>
+
+    <section class="filters" aria-label="Categorías de bloqueo" id="filters"></section>
+    <p class="feedback" id="feedback" role="status" aria-live="polite"></p>
+  </main>
+  <script src="../categories.js"></script>
   <script src="popup.js"></script>
 </body>
 </html>
