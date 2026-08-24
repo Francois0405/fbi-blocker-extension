@@ -1,7 +1,3 @@
-if (typeof importScripts === 'function') {
-  importScripts('categories.js');
-}
-
 let blockedDomains = new Set();
 let activeFilters = { ...DEFAULT_FILTERS };
 let loadGeneration = 0;
@@ -22,7 +18,7 @@ async function loadLists() {
   try {
     const lists = await Promise.all(enabledCategories.map(async ({ listPath }) => {
       const response = await fetch(chrome.runtime.getURL(listPath));
-      if (!response.ok) throw new Error(`No se pudo cargar ${listPath}`);
+      if (!response.ok) throw new Error(`Could not load ${listPath}`);
       return response.json();
     }));
 
@@ -31,9 +27,9 @@ async function loadLists() {
     const nextBlockedDomains = new Set();
     lists.forEach(domains => domains.forEach(domain => nextBlockedDomains.add(domain)));
     blockedDomains = nextBlockedDomains;
-    console.log(`Motor de bloqueo listo. Dominios cargados en RAM: ${blockedDomains.size}`);
+    console.log(`Blocking engine ready. Domains loaded in memory: ${blockedDomains.size}`);
   } catch (error) {
-    console.error('No se pudieron cargar las listas de bloqueo:', error);
+    console.error('Could not load blocking lists:', error);
   }
 }
 
@@ -60,13 +56,13 @@ chrome.webNavigation.onBeforeNavigate.addListener((details) => {
 
     for (let i = 0; i < parts.length - 1; i += 1) {
       if (blockedDomains.has(parts.slice(i).join('.'))) {
-        chrome.tabs.update(details.tabId, {
-          url: chrome.runtime.getURL('fbi/fbi.html')
-        });
+        const blockedPage = new URL(chrome.runtime.getURL('fbi/fbi.html'));
+        blockedPage.searchParams.set('domain', hostname);
+        chrome.tabs.update(details.tabId, { url: blockedPage.href });
         break;
       }
     }
   } catch {
-    // Ignoramos URLs que no se pueden analizar.
+    // Ignore URLs that cannot be parsed.
   }
 });

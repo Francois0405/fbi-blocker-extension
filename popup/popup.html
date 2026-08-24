@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -12,27 +12,32 @@
       <div class="brand-mark" aria-hidden="true">✦</div>
       <div>
         <p class="eyebrow">FBI CONTENT BLOCKER</p>
-        <h1 id="protection-title">Protección activa</h1>
-        <p class="summary" id="protection-summary">Cargando filtros…</p>
+        <h1 id="protection-title">Protection active</h1>
+        <p class="summary" id="protection-summary">Loading filters…</p>
       </div>
     </header>
 
     <section class="master-card" aria-labelledby="master-label">
       <div>
-        <p class="card-label" id="master-label">Protección completa</p>
-        <p class="card-description">Activa o pausa todos los filtros.</p>
+        <p class="card-label" id="master-label">Complete protection</p>
+        <p class="card-description">Turn every filter on or off.</p>
       </div>
       <label class="switch">
-        <span class="sr-only">Activar todos los filtros</span>
+        <span class="sr-only">Enable all filters</span>
         <input type="checkbox" id="toggle-all">
         <span class="slider"></span>
       </label>
     </section>
 
-    <section class="filters" aria-label="Categorías de bloqueo" id="filters"></section>
+    <section class="filters" aria-label="Blocking categories" id="filters"></section>
     <p class="feedback" id="feedback" role="status" aria-live="polite"></p>
+    <aside class="disclaimer" aria-label="Disclaimer">
+      <p class="card-label">Disclaimer</p>
+      <p id="settings-disclaimer"></p>
+    </aside>
   </main>
   <script src="../categories.js"></script>
+  <script src="../disclaimer.js"></script>
   <script src="popup.js"></script>
 </body>
 </html>

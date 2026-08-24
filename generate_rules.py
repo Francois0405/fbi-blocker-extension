@@ -31,17 +31,17 @@ def normalize_domains(domains):
 
 
 def download_and_parse(url):
-    print(f"\nDescargando datos de {url}...")
+    print(f"\nDownloading data from {url}...")
     request = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
     try:
         with urllib.request.urlopen(request) as response:
             return parse_hosts(response.read().decode("utf-8"))
     except Exception as error:
-        raise RuntimeError(f"Error descargando {url}: {error}") from error
+        raise RuntimeError(f"Error downloading {url}: {error}") from error
 
 
 def compress_domains(domains):
-    print("  [+] Optimizando dataset: Eliminando redundancias...")
+    print("  [+] Optimizing dataset: removing redundant subdomains...")
     normalized = normalize_domains(domains)
 
     final_domains = set()
@@ -50,7 +50,7 @@ def compress_domains(domains):
         if not any(".".join(parts[index:]) in normalized for index in range(1, len(parts) - 1)):
             final_domains.add(domain)
 
-    print(f"  [+] Reducción: de {len(domains)} a {len(final_domains)} dominios activos.")
+    print(f"  [+] Reduced from {len(domains)} to {len(final_domains)} active domains.")
     return sorted(final_domains)
 
 
@@ -67,13 +67,13 @@ def main():
             continue
         category_only_domains = normalize_domains(domains) - base_source_domains
         generated_lists[category] = compress_domains(category_only_domains)
-        print(f"  [+] Dominios exclusivos de {category}: {len(generated_lists[category])}")
+        print(f"  [+] Domains unique to {category}: {len(generated_lists[category])}")
 
     for category, domains in generated_lists.items():
         output_file = os.path.join(OUTPUT_DIR, f"list_{category}.json")
         with open(output_file, "w", encoding="utf-8") as output:
             json.dump(domains, output, ensure_ascii=False, separators=(",", ",:"))
-        print(f"  --> Archivo maestro generado: {output_file} (Dominios: {len(domains)})")
+        print(f"  --> Generated list: {output_file} (domains: {len(domains)})")
 
 
 if __name__ == "__main__":

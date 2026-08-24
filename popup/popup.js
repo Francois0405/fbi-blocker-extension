@@ -3,6 +3,7 @@ const masterToggle = document.getElementById('toggle-all');
 const protectionTitle = document.getElementById('protection-title');
 const summary = document.getElementById('protection-summary');
 const feedback = document.getElementById('feedback');
+const settingsDisclaimer = document.getElementById('settings-disclaimer');
 
 let filters = { ...DEFAULT_FILTERS };
 let saving = false;
@@ -13,10 +14,10 @@ function enabledCount() {
 
 function renderSummary() {
   const enabled = enabledCount();
-  protectionTitle.textContent = enabled === 0 ? 'Protección pausada' : 'Protección activa';
+  protectionTitle.textContent = enabled === 0 ? 'Protection paused' : 'Protection active';
   summary.textContent = enabled === FILTER_CATEGORIES.length
-    ? 'Todos los filtros están activados.'
-    : `${enabled} de ${FILTER_CATEGORIES.length} filtros activados.`;
+    ? 'All filters are enabled.'
+    : `${enabled} of ${FILTER_CATEGORIES.length} filters enabled.`;
   masterToggle.checked = enabled === FILTER_CATEGORIES.length;
   masterToggle.indeterminate = enabled > 0 && enabled < FILTER_CATEGORIES.length;
   masterToggle.disabled = saving;
@@ -31,7 +32,7 @@ function renderFilters() {
         <p>${category.description}</p>
       </div>
       <label class="switch">
-        <span class="sr-only">Activar ${category.label}</span>
+        <span class="sr-only">Enable ${category.label}</span>
         <input type="checkbox" data-filter="${category.key}" ${filters[category.key] ? 'checked' : ''} ${saving ? 'disabled' : ''}>
         <span class="slider"></span>
       </label>
@@ -65,9 +66,9 @@ async function saveFilters(nextFilters) {
   try {
     await chrome.storage.local.set({ filters });
   } catch (error) {
-    console.error('No se pudieron guardar los filtros:', error);
+    console.error('Could not save filters:', error);
     filters = previousFilters;
-    feedback.textContent = 'No se pudieron guardar los cambios. Inténtalo de nuevo.';
+    feedback.textContent = 'Could not save your changes. Please try again.';
     render();
   } finally {
     saving = false;
@@ -88,8 +89,9 @@ document.addEventListener('DOMContentLoaded', async () => {
       typeof result.filters?.[key] === 'boolean' ? result.filters[key] : defaultEnabled
     ]));
   } catch (error) {
-    console.error('No se pudieron cargar los filtros:', error);
-    feedback.textContent = 'No se pudo cargar la configuración guardada.';
+    console.error('Could not load filters:', error);
+    feedback.textContent = 'Could not load your saved settings.';
   }
+  settingsDisclaimer.textContent = DISCLAIMERS.settings;
   render();
 });

@@ -1,8 +1,8 @@
 const FILTER_CATEGORIES = [
   {
     key: 'base',
-    label: 'Protección base',
-    description: 'Publicidad maliciosa y amenazas',
+    label: 'Core protection',
+    description: 'Malicious advertising and known threats',
     icon: 'shield',
     listPath: 'rules/list_base.json',
     defaultEnabled: true,
@@ -10,32 +10,32 @@ const FILTER_CATEGORIES = [
   },
   {
     key: 'porn',
-    label: 'Contenido adulto',
-    description: 'Sitios para mayores de edad',
+    label: 'Adult content',
+    description: 'Mature and explicit websites',
     icon: 'adult',
     listPath: 'rules/list_porn.json',
     defaultEnabled: true
   },
   {
     key: 'gambling',
-    label: 'Apuestas y casinos',
-    description: 'Juego online y apuestas',
+    label: 'Gambling',
+    description: 'Online betting and casino websites',
     icon: 'game',
     listPath: 'rules/list_gambling.json',
     defaultEnabled: true
   },
   {
     key: 'fakenews',
-    label: 'Desinformación',
-    description: 'Fuentes de noticias poco fiables',
+    label: 'Misinformation',
+    description: 'Sources listed as unreliable news',
     icon: 'news',
     listPath: 'rules/list_fakenews.json',
     defaultEnabled: true
   },
   {
     key: 'social',
-    label: 'Redes sociales',
-    description: 'Plataformas sociales y distracciones',
+    label: 'Social media',
+    description: 'Social platforms and distractions',
     icon: 'social',
     listPath: 'rules/list_social.json',
     defaultEnabled: true
