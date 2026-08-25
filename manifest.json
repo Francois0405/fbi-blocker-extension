@@ -2,7 +2,15 @@
   "manifest_version": 3,
   "name": "FBI Content Blocker",
   "version": "1.1.0",
-  "description": "A configurable, local website-content filter with a clear extension-generated block page.",
+  "description": "A configurable, local website-content filter with prank fbi website seizure page.",
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "fbi-content-blocker@ifenterprise.dev",
+      "data_collection_permissions": {
+        "required": ["none"]
+      }
+    }
+  },
   "permissions": [
     "webNavigation",
     "tabs",

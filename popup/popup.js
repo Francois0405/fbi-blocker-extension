@@ -24,7 +24,7 @@ function renderSummary() {
 }
 
 function renderFilters() {
-  filterContainer.innerHTML = FILTER_CATEGORIES.map(category => `
+  filterContainer.textContent = FILTER_CATEGORIES.map(category => `
     <article class="filter-card${category.featured ? ' featured' : ''}">
       <span class="icon icon-${category.icon}" aria-hidden="true">${iconFor(category.icon)}</span>
       <div class="filter-copy">
