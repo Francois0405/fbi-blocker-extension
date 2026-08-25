@@ -53,6 +53,11 @@ node --check fbi/fbi.js
 
 Edit [`disclaimer.js`](disclaimer.js). `DISCLAIMERS.settings` appears in the toolbar settings popup and `DISCLAIMERS.blockedPage` appears on the local blocked page. Keeping the text in this one file prevents the two notices from drifting apart.
 
+## Privacy and publishing
+
+- Read the [privacy policy](PRIVACY_POLICY.md) for the add-on's local-only data practices.
+- Follow [the Firefox Add-ons publishing guide](PUBLISHING_TO_FIREFOX.md) to validate, package, submit, and update the public AMO listing.
+
 ## Project layout
 
 ```text
