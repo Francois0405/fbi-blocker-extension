@@ -24,7 +24,7 @@ function renderSummary() {
 }
 
 function renderFilters() {
-  filterContainer.textContent = FILTER_CATEGORIES.map(category => `
+  const rawHtml = FILTER_CATEGORIES.map(category => `
     <article class="filter-card${category.featured ? ' featured' : ''}">
       <span class="icon icon-${category.icon}" aria-hidden="true">${iconFor(category.icon)}</span>
       <div class="filter-copy">
@@ -38,6 +38,13 @@ function renderFilters() {
       </label>
     </article>
   `).join('');
+
+  // Parsea el HTML en un documento temporal de forma segura
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(rawHtml, 'text/html');
+
+  // Limpia el contenedor e inyecta los elementos DOM reales
+  filterContainer.replaceChildren(...doc.body.childNodes);
 
   filterContainer.querySelectorAll('[data-filter]').forEach(toggle => {
     toggle.addEventListener('change', async event => {

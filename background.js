@@ -1,3 +1,7 @@
+if (typeof importScripts === 'function') {
+  importScripts('categories.js', 'disclaimer.js');
+}
+
 let blockedDomains = new Set();
 let activeFilters = { ...DEFAULT_FILTERS };
 let loadGeneration = 0;
